@@ -41,15 +41,23 @@ for (i, imagePath) in enumerate(imagePaths):
 	# to dlib ordering (RGB)
 	image = cv2.imread(imagePath)
 	rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+	print(rgb.shape)
+	if rgb.shape[0] > 640:
+		new_shape = (round((640.0/rgb.shape[0])*rgb.shape[1]), 640)
+		rgb = cv2.resize(rgb, new_shape)
+	print(rgb.shape)
+	print('doing {}'.format(imagePath))
 
 	# detect the (x, y)-coordinates of the bounding boxes
 	# corresponding to each face in the input image
 	boxes = face_recognition.face_locations(rgb,
 		model=args["detection_method"])
 
+	print('got the boxes')
 	# compute the facial embedding for the face
 	encodings = face_recognition.face_encodings(rgb, boxes)
 
+	print('number of faces: {}'.format(len(encodings)))
 	# loop over the encodings
 	for encoding in encodings:
 		# add each encoding + name to our set of known names and
